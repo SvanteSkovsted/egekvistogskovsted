@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-type SceneProps = { kind: 'hero' | 'system'; paused: boolean; onReady?: () => void };
+type SceneProps = { kind: 'hero' | 'system' | 'portfolio'; paused: boolean; onReady?: () => void };
 export default function Scene({ kind, paused, onReady }: SceneProps) {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -23,18 +23,18 @@ export default function Scene({ kind, paused, onReady }: SceneProps) {
       element.appendChild(renderer.domElement);
       const scene = new T.Scene();
       const camera = new T.PerspectiveCamera(36, 1, .1, 100);
-      camera.position.z = kind === 'hero' ? 6.5 : 10;
+      camera.position.z = kind === 'hero' ? 6.5 : kind === 'portfolio' ? 7.5 : 10;
       const pmrem = new T.PMREMGenerator(renderer);
       const room = new RoomEnvironment();
       const environment = pmrem.fromScene(room, .04);
       scene.environment = environment.texture;
       room.dispose(); pmrem.dispose();
       const group = new T.Group(); scene.add(group);
-      const geometry = kind === 'hero' ? new T.TorusKnotGeometry(1.22, .31, 200, 32, 2, 3) : new T.BoxGeometry(.57, .57, .57);
-      const material = new T.MeshPhysicalMaterial({ color: kind === 'hero' ? 0xb8c8e9 : 0x2854ff, metalness: kind === 'hero' ? 1 : .65, roughness: kind === 'hero' ? .14 : .25, clearcoat: 1, clearcoatRoughness: .12 });
+      const geometry = kind === 'hero' ? new T.TorusKnotGeometry(1.22, .31, 200, 32, 2, 3) : kind === 'portfolio' ? new T.TorusGeometry(1.5,.07,20,100) : new T.BoxGeometry(.57, .57, .57);
+      const material = new T.MeshPhysicalMaterial({ color: kind === 'system' ? 0x2854ff : 0xb8c8e9, metalness: kind === 'hero' ? 1 : .65, roughness: kind === 'hero' ? .14 : .25, clearcoat: 1, clearcoatRoughness: .12 });
       const knot = new T.Mesh(geometry, material);
       const cubes = new T.InstancedMesh(geometry, material, 64);
-      if (kind === 'hero') group.add(knot); else group.add(cubes);
+      if (kind === 'hero') group.add(knot); else if (kind === 'portfolio') { for(let i=0;i<3;i++){const ring=new T.Mesh(geometry,material);ring.rotation.set(i*Math.PI/3,i*Math.PI/3,0);group.add(ring);} } else group.add(cubes);
       scene.add(new T.AmbientLight(0xdce7ff, 1));
       const light = new T.DirectionalLight(0xd1dcff, 5); light.position.set(-3, 4, 5); scene.add(light);
       const rim = new T.PointLight(0x315cff, 35); rim.position.set(4, -2, 3); scene.add(rim);
@@ -47,7 +47,7 @@ export default function Scene({ kind, paused, onReady }: SceneProps) {
       const ro = new ResizeObserver(resize); ro.observe(element); resize();
       const pointer = (event: PointerEvent) => {px = (event.clientX / window.innerWidth - .5) * .3; py = (event.clientY / window.innerHeight - .5) * .2;};
       window.addEventListener('pointermove',pointer,{passive:true});
-      const transformSection = document.getElementById('transformation');
+      const transformSection = document.getElementById(kind === 'portfolio' ? 'other-work' : 'transformation');
       const render = (time:number) => {
         frame = requestAnimationFrame(render);
         if (!visible || document.hidden) return;
@@ -58,6 +58,11 @@ export default function Scene({ kind, paused, onReady }: SceneProps) {
           group.rotation.set(.2 + t * .22 + smy + scroll * .6, -.45 + t*.34 + smx + scroll*1.8, -.4 + scroll*.55);
           group.position.y = paused ? 0 : Math.sin(t)*.1 - scroll*.35;
           group.scale.setScalar(1 + scroll*.12);
+        } else if(kind === 'portfolio') {
+          const rect=transformSection?.getBoundingClientRect();
+          const p=paused ? 0 : 1-(rect?.top ?? 0)/window.innerHeight;
+          group.rotation.set(.4+p*.7+t*.2,p*1.6+t*.25,-.3+p*.4);
+          group.children.forEach((ring,i)=>{ring.rotation.x=i*Math.PI/3+p*.5;ring.rotation.y=i*Math.PI/3+p*(i-1)*.7;});
         } else {
           const rect = transformSection?.getBoundingClientRect();
           const p = paused ? 1 : Math.max(0,Math.min(1, -(rect?.top ?? 0) / Math.max(1,(rect?.height ?? 1)-window.innerHeight)));
@@ -78,5 +83,5 @@ export default function Scene({ kind, paused, onReady }: SceneProps) {
     }).catch(()=> {if(!disposed){element.dataset.fallback='true';onReady?.();}});
     return () => {disposed=true;cleanup();};
   },[kind,paused,onReady]);
-  return <div ref={host} className={`three-scene scene-${kind}`} aria-hidden="true"><div className="scene-fallback">{kind==='hero'?'∞':'✳'}</div></div>;
+  return <div ref={host} className={`three-scene scene-${kind}`} aria-hidden="true"><div className="scene-fallback">{kind==='system'?'✳':'∞'}</div></div>;
 }
