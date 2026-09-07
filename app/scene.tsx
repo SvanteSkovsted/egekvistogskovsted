@@ -42,7 +42,8 @@ export default function Scene({ kind, paused, onReady }: SceneProps) {
       const dispersed = Array.from({length:64},(_,i)=>new T.Vector3(Math.sin(i * 12.3) * 4.6, Math.cos(i * 6.78) * 3.5, Math.sin(i * 4.13) * 2.8));
       let visible = true, frame = 0, px = 0, py = 0, smx = 0, smy = 0;
       const observer = new IntersectionObserver(([entry]) => {visible = entry.isIntersecting;}, {rootMargin:'150px'}); observer.observe(element);
-      const resize = () => {const w = element.clientWidth, h = element.clientHeight; renderer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix();};
+      let lastWidth = 0, lastHeight = 0;
+      const resize = () => {const w = element.clientWidth, h = element.clientHeight; if (!w || !h || (w === lastWidth && h === lastHeight)) return; lastWidth = w; lastHeight = h; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();};
       const ro = new ResizeObserver(resize); ro.observe(element); resize();
       const pointer = (event: PointerEvent) => {px = (event.clientX / window.innerWidth - .5) * .3; py = (event.clientY / window.innerHeight - .5) * .2;};
       window.addEventListener('pointermove',pointer,{passive:true});
