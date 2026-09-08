@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Oakranch — Making complex work feel simple',
-  description: 'We turn complex, manual work into simple, intelligent software. Independent minds. Transformative AI. Meet Oakranch.',
+  title: 'Oakbranch — Making complex work feel simple',
+  description: 'We turn complex, manual work into simple, intelligent software. Independent minds. Transformative AI. Meet Oakbranch.',
 };
 
 export default function RootLayout({
