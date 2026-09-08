@@ -1,16 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
-import { ArrowUpRight, ArrowDown, Plus, MoveUpRight, Pause, Play, Check, FileText, Layers, Sparkles, Sun, Coffee, BookOpen, Heart, CalendarDays, Users, UserRound, ArrowRight } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, ArrowDown, Plus, MoveUpRight, Pause, Play, Check, FileText, Layers, Sparkles, Sun, Coffee, BookOpen, Heart, CalendarDays, Users, ArrowRight } from 'lucide-react';
 import Scene from './scene';
 
 const Arrow = () => <ArrowUpRight size={19} strokeWidth={1.5}/>;
 const phrase = 'The world is complex. Work doesn’t have to be.';
-const peoplePositions = [{x:70,y:125},{x:210,y:65},{x:330,y:145},{x:295,y:307},{x:108,y:317}];
 
 export default function Home() {
   const root = useRef<HTMLElement>(null);
   const [loaded,setLoaded] = useState(false);
+  const [introGone,setIntroGone] = useState(false);
   const [paused,setPaused] = useState(false);
   const readyRef = useRef(false);
   const onReady = useCallback(()=>{readyRef.current=true;},[]);
@@ -19,10 +19,15 @@ export default function Home() {
     const start=performance.now();
     const interval=window.setInterval(()=>{
       const elapsed=performance.now()-start;
-      if ((elapsed>1450 && readyRef.current) || elapsed>1950 || paused) {setLoaded(true);window.clearInterval(interval);}
+      if ((elapsed>1700 && readyRef.current) || elapsed>2300 || paused) {setLoaded(true);window.clearInterval(interval);}
     },45);
     return()=>window.clearInterval(interval);
   },[paused]);
+  useEffect(()=> {
+    if(!loaded) return;
+    const timeout=window.setTimeout(()=>setIntroGone(true),800);
+    return()=>window.clearTimeout(timeout);
+  },[loaded]);
   useEffect(()=> {
     if(!loaded) return;
     let stop=()=>{},disposed=false;
@@ -59,14 +64,7 @@ export default function Home() {
         gsap.utils.toArray<HTMLElement>('.about-title-line > span').forEach((line,index)=>gsap.fromTo(line,{yPercent:80,rotateX:-35},{yPercent:0,rotateX:0,ease:'none',scrollTrigger:{trigger:'.about-heading',start:`top ${85-index*8}%`,end:'top 32%',scrub:.9}}));
         gsap.fromTo('.about-sculpture',{y:70,rotation:-12},{y:-45,rotation:10,scrollTrigger:{trigger:'.about-intro',start:'top bottom',end:'bottom top',scrub:1.2}});
         gsap.utils.toArray<HTMLElement>('.team-principle').forEach((el,index)=>gsap.fromTo(el,{y:65+index*20,rotateX:18},{y:0,rotateX:0,scrollTrigger:{trigger:'.team-principles',start:'top 92%',end:'top 52%',scrub:1}}));
-        const peopleTimeline=gsap.timeline({scrollTrigger:{trigger:'.people-network',start:'top 88%',end:'top 35%',scrub:1}});
-        peopleTimeline.fromTo('.people-core',{scale:.65},{scale:1,duration:.7},0);
-        gsap.utils.toArray<HTMLElement>('.people-node').forEach((node,index)=>{
-          const point=peoplePositions[index];
-          peopleTimeline.fromTo(node,{x:(point.x-200)*.32,y:(point.y-200)*.32,scale:.72,rotateY:35},{x:0,y:0,scale:1,rotateY:0,duration:.8},index*.05);
-        });
-        peopleTimeline.fromTo('.people-connection',{strokeDashoffset:1},{strokeDashoffset:0,duration:.8,stagger:.06},.2);
-        gsap.fromTo('.people-network-layer',{rotateX:20,rotateZ:-9,y:25},{rotateX:0,rotateZ:5,y:-15,ease:'none',scrollTrigger:{trigger:'.team-story',start:'top 90%',end:'bottom 30%',scrub:1.2}});
+        gsap.fromTo('.collective-progress span',{scaleX:0},{scaleX:1,ease:'none',scrollTrigger:{trigger:'.collective-sculpture',start:'top 85%',end:'top 5%',scrub:1}});
         gsap.fromTo('.founder-portrait-frame',{rotateY:-11,rotateX:7,scale:.93},{rotateY:0,rotateX:0,scale:1,scrollTrigger:{trigger:'.founder-profile',start:'top 87%',end:'top 16%',scrub:1.1}});
         gsap.fromTo('.founder-portrait-frame img',{scale:1.12,yPercent:-3},{scale:1.03,yPercent:3,scrollTrigger:{trigger:'.founder-profile',start:'top bottom',end:'bottom top',scrub:1.3}});
         gsap.fromTo('.founder-caption',{y:35,z:20},{y:-10,z:70,scrollTrigger:{trigger:'.founder-profile',start:'top 85%',end:'bottom 55%',scrub:1}});
@@ -85,9 +83,15 @@ export default function Home() {
 
   return <main ref={root} className={`${loaded?'is-ready':''} ${paused?'motion-paused':''}`}>
     <a className="skip-link" href="#approach">Skip to content</a>
-    <div className={`loader oak-loader ${loaded?'loader-finished':''}`} aria-hidden={loaded} role="status" aria-label="Loading Oakbranch">
-      <div className="oak-loader-name" aria-label="Oakbranch"><span className="oak-loader-o" aria-hidden="true"><svg className="oak-drawn-o" viewBox="0 0 80 100"><path d="M40 9a30 41 0 1 1 0 82a30 41 0 1 1 0-82" pathLength="1"/></svg></span><span className="oak-loader-unfold" aria-hidden="true">{Array.from('akbranch').map((letter,index)=><span key={index} style={{'--letter-delay':`${620+index*35}ms`} as CSSProperties}>{letter}</span>)}</span></div>
-    </div>
+    {!introGone && <div className={`signature-loader ${loaded?'signature-exit':''}`} role="status" aria-label="Loading Oakbranch" aria-hidden={loaded}>
+      <div className="signature-centre" aria-hidden="true">
+        <div className="signature-object"><Scene kind="signature" paused={paused}/></div>
+        <div className="signature-wordmark"><span>Oakbranch</span></div>
+        <span className="signature-caption">COMPLEXITY, REIMAGINED.</span>
+        <div className="signature-track"><span/></div>
+      </div>
+      <span className="signature-footnote" aria-hidden="true">INDEPENDENT MINDS. SHARED AMBITION.</span>
+    </div>}
     <header className="site-header"><a className="wordmark" href="#top" aria-label="Oakbranch home">Oakbranch</a><nav aria-label="Main navigation"><a href="#approach">Our approach</a><a href="#work">Selected work <sup>03</sup></a><a href="#other-work">Other work</a><a href="#about">About us</a></nav><a className="contact-nav" href="mailto:mail@structo.dk">Let’s talk <span><Arrow/></span></a></header>
     <section className="hero" id="top"><div className="hero-top"><span className="eyebrow"><i className="status-dot"/> INDEPENDENT MINDS. INTELLIGENT SOFTWARE.</span><span className="edition">BUILT IN DENMARK. THINKING BEYOND.</span></div><div className="hero-art"><Scene kind="hero" paused={paused} onReady={onReady}/></div><h1 aria-label="Making complex work feel simple"><span className="hero-line"><span>Making complex</span></span><span className="hero-line"><span>work feel <em>simple.</em></span></span></h1><div className="hero-bottom"><p>We turn the work that slows the world down<br className="desktop-break"/> into software that moves it forward.</p><a className="circle-link" href="#approach"><span>SCROLL TO SIMPLIFY</span><i><ArrowDown size={20}/></i></a></div><div className="hero-caption"><span>HUMAN AMBITION × ARTIFICIAL INTELLIGENCE</span><span>01 — ∞</span></div></section>
 
@@ -113,7 +117,7 @@ export default function Home() {
     <section className="about-section" id="about" aria-labelledby="about-title">
       <div className="section-marker"><span className="eyebrow">05 / ABOUT US</span><span className="eyebrow">INDEPENDENT IN SPIRIT. UNITED BY PURPOSE.</span></div>
       <div className="about-intro"><div className="about-heading"><h2 id="about-title"><span className="about-title-line"><span>Curious minds.</span></span><span className="about-title-line"><span>Shared <em>ambition.</em></span></span></h2><p className="about-lead">We see a world full of things<br/>that could work a little better.</p></div><div className="about-sculpture"><Scene kind="about" paused={paused}/></div></div>
-      <div className="team-story"><div className="team-story-visual"><span className="eyebrow">THE PEOPLE BEHIND THE POSSIBILITIES</span><div className="people-network" aria-hidden="true"><div className="people-network-layer"><svg className="people-connections" viewBox="0 0 400 400"><circle className="people-orbit-line" cx="200" cy="200" r="132"/>{peoplePositions.map((point,index)=><path className="people-connection" key={index} d={`M 200 200 Q ${200+(point.x-200)*.65} ${200+(point.y-200)*.2} ${point.x} ${point.y}`} pathLength="1"/>)}</svg><span className="people-core"><span>O</span><i/></span>{peoplePositions.map((point,index)=><span key={index} className={`people-node person-${index}`} style={{left:`${point.x/4}%`,top:`${point.y/4}%`,'--float-delay':`${index*-.9}s`} as CSSProperties}><span className="people-avatar"><UserRound strokeWidth={1.25}/></span></span>)}</div><span className="people-caption">INDIVIDUAL PERSPECTIVES. SHARED DIRECTION.</span></div></div><div className="team-story-copy"><p>We’re independent thinkers and hands-on builders, brought together by a simple instinct: when something feels harder than it should, there’s probably a better way.</p><p>Our work starts with listening. To the people doing the work. To the details that get overlooked. To the small frustrations that add up. Then we bring curiosity, craft, and intelligent software together to turn those observations into useful products.</p><p>Different perspectives. A shared standard. Technology should feel thoughtful, work beautifully, and leave people with more room to do what matters.</p></div></div>
+      <div className="team-story"><div className="team-story-visual"><span className="eyebrow">THE PEOPLE BEHIND THE POSSIBILITIES</span><figure className="collective-sculpture" id="team-collective"><div className="collective-canvas"><Scene kind="collective" paused={paused}/></div><figcaption><span>DIFFERENT PERSPECTIVES.</span><span>ONE SHARED AMBITION.</span></figcaption><div className="collective-progress" aria-hidden="true"><span/></div></figure></div><div className="team-story-copy"><p>We’re independent thinkers and hands-on builders, brought together by a simple instinct: when something feels harder than it should, there’s probably a better way.</p><p>Our work starts with listening. To the people doing the work. To the details that get overlooked. To the small frustrations that add up. Then we bring curiosity, craft, and intelligent software together to turn those observations into useful products.</p><p>Different perspectives. A shared standard. Technology should feel thoughtful, work beautifully, and leave people with more room to do what matters.</p></div></div>
       <div className="team-principles">{[{number:'01',title:'Stay curious.',copy:'The best ideas begin with a better question.'},{number:'02',title:'Build with purpose.',copy:'Make something useful. Then make it feel effortless.'},{number:'03',title:'Think beyond.',copy:'Solve today’s problem with tomorrow in mind.'}].map(item=><article className="team-principle" key={item.number}><span>{item.number} /</span><h3>{item.title}</h3><p>{item.copy}</p></article>)}</div>
       <div className="founder-section" id="founder"><div className="section-marker"><span className="eyebrow">06 / MEET OUR FOUNDER</span><Plus size={18}/></div><div className="founder-profile"><figure className="founder-portrait"><div className="founder-portrait-frame"><img src="/svante-founder.jpg" alt="Svante Egekvist Skovsted, founder of Oakbranch" width="772" height="776" loading="lazy" decoding="async"/></div><figcaption className="founder-caption"><span>Svante Egekvist Skovsted</span><span>FOUNDER & SOFTWARE DEVELOPER</span></figcaption></figure><div className="founder-copy"><span className="eyebrow">A SIMPLE IDEA. A LONG-TERM VISION.</span><h2>Built on curiosity.<br/><span>Driven by possibility.</span></h2><p className="founder-intro">Our founder, Svante Egekvist Skovsted, is a Danish entrepreneur and software developer focused on artificial intelligence and SaaS.</p><p>He founded Oakbranch with the ambition of using AI and modern software to solve complex, real-world problems.</p><p>His focus is on industries where work is still manual, fragmented, or unnecessarily complicated — and on building technology that makes those processes simpler and more efficient.</p><div className="founder-signoff"><span>Svante Egekvist Skovsted</span><span>OAKBRANCH</span></div></div></div><div className="europe-ambition"><div className="ambition-rule"/><span className="eyebrow">ROOTED IN DENMARK. LOOKING AHEAD.</span><div><h3>Meaningful products.<br/><em>A stronger Europe.</em></h3><p>Svante’s long-term ambition is to build technology companies that create meaningful products while contributing to a stronger, more technologically independent Europe.</p></div></div></div>
     </section>
@@ -121,6 +125,6 @@ export default function Home() {
     <section className="possibility"><span className="eyebrow">LESS OF WHAT HOLDS US BACK. MORE OF WHAT MOVES US.</span><div className="possibility-lines" aria-label="Less friction. More future."><div className="possibility-line one" aria-hidden="true">Less friction. <span>Less friction.</span></div><div className="possibility-line two" aria-hidden="true"><span>More future.</span> More future.</div></div><p>We believe the next revolution is a quieter one.<br/>Work that just works. People free to do more.<br/>A world moving forward, one simple idea at a time.</p><span className="possibility-footnote">THAT’S THE FUTURE WE’RE BUILDING.</span></section>
 
     <footer id="contact" className="site-footer"><div className="footer-top"><span className="eyebrow"><i className="status-dot"/> GOOD CONVERSATIONS BUILD GREAT THINGS.</span><a href="#top" className="back-top">BACK TO TOP ↑</a></div><div className="footer-callout"><h2>Complex challenge?<br/><a href="mailto:mail@structo.dk">Let’s make it simple.<ArrowUpRight strokeWidth={1}/></a></h2><span className="footer-asterisk" aria-hidden="true">✳</span></div><div className="footer-contact"><a href="mailto:mail@structo.dk">mail@structo.dk <Arrow/></a><p>Independent minds.<br/>Building a simpler tomorrow.</p></div><div className="footer-wordmark" aria-label="Oakbranch">Oakbranch<span className="oak-footer-dot">.</span></div><div className="footer-bottom"><span>© {new Date().getFullYear()} OAKBRANCH</span><span>MADE OF CURIOSITY. POWERED BY AI.</span><button onClick={()=>setPaused(!paused)} aria-pressed={paused}>{paused?<Play size={12}/>:<Pause size={12}/>} MOTION {paused?'OFF':'ON'}</button></div></footer>
-    <noscript><style>{'.loader{display:none}.hero-line>span{transform:none!important;opacity:1!important}.system-copy-last{display:none}'}</style></noscript>
+    <noscript><style>{'.signature-loader{display:none}.hero-line>span{transform:none!important;opacity:1!important}.system-copy-last{display:none}'}</style></noscript>
   </main>
 }
