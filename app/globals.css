@@ -91,3 +91,31 @@ html.lenis,html.lenis body{height:auto}.lenis:not(.lenis-autoToggle).lenis-stopp
 @media(max-width:760px){.hero-art{width:100%;right:0;top:9%;height:62%}.signature-object{width:180px;height:180px}.signature-centre{transform:translateY(-10px)}.signature-footnote{font-size:8px;bottom:26px}.collective-sculpture{max-width:370px;margin:12px auto 0}.team-story-visual>.eyebrow{font-size:11px;max-width:230px}.collective-sculpture figcaption{font-size:8px;padding:12px 0}.footer-wordmark{font-size:18.1vw}}
 .motion-paused .signature-centre *{animation:none}.motion-paused .signature-loader{transition-duration:.1s}
 @media(prefers-reduced-motion:reduce){.signature-centre *{animation:none}.signature-loader{transition-duration:.1s}}
+
+/* An invitation to build Europe's next software companies. */
+.venture-section{position:relative;background:#10151e;color:#edf2fa;padding:60px 8.3% 35px;overflow:hidden;isolation:isolate}
+.venture-section>.section-marker{color:#8696b0}
+.venture-section .eyebrow{font-size:11px}
+.venture-layout{display:grid;grid-template-columns:1.15fr 1fr;column-gap:7%;align-items:center;margin:95px 0 75px}
+.venture-heading{grid-column:1 / -1;grid-row:1;z-index:2;pointer-events:none}
+.venture-heading h2{font-size:clamp(48px,5.7vw,94px);line-height:1.06;font-weight:450;letter-spacing:-.065em;margin:0}
+.venture-title-line{display:block;overflow:hidden;perspective:900px;padding:0 .08em .09em 0;margin-bottom:-.09em}
+.venture-title-line>span{display:block;transform-origin:center bottom}
+.venture-heading em{font-style:normal;color:#9fb9ff}
+.venture-art{grid-column:2;grid-row:1 / 3;width:100%;margin:0;align-self:start;position:relative;padding-top:35px;pointer-events:none}
+.venture-canvas{width:100%;aspect-ratio:1;position:relative;background:radial-gradient(ellipse at 50% 50%,#31476b24,transparent 68%)}
+.venture-art figcaption{font:9px var(--font-geist-mono),monospace;text-align:center;color:#7c90af;letter-spacing:.08em;line-height:1.6;margin:8px 0 0}
+.venture-detail{grid-column:1;grid-row:2;max-width:475px;margin-top:55px;position:relative;z-index:2}
+.venture-detail h3{font-size:23px;line-height:1.45;letter-spacing:-.025em;font-weight:450;margin:0 0 23px}
+.venture-detail p{font-size:17px;line-height:1.75;letter-spacing:-.015em;color:#a0aec3;margin:0 0 19px}
+.venture-contact{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:35px;padding:22px 0;border-top:1px solid #62728e55;color:#f2f6fe;text-decoration:none}
+.venture-contact>span{min-width:0}.venture-contact strong{display:block;font-weight:450;font-size:18px;letter-spacing:-.015em}.venture-contact>span>span{display:block;font-size:13px;color:#9caec8;margin-top:8px;overflow-wrap:anywhere}
+.venture-contact i{display:grid;place-items:center;flex:0 0 52px;height:52px;border:1px solid #8095b05c;border-radius:50%;transition:background .25s,transform .35s,border-color .25s}
+.venture-contact:hover i{transform:translate(3px,-3px);background:#244aff;border-color:#244aff}.venture-contact:focus-visible{outline:2px solid #a5beff;outline-offset:8px}
+.venture-rule{height:1px;background:#465670;transform-origin:left}
+.venture-bottom{display:flex;justify-content:space-between;gap:24px;padding-top:22px;color:#788ba8;font:10px var(--font-geist-mono),monospace;letter-spacing:.04em}
+@media(min-width:1101px){.venture-art{width:118%;margin-left:-8%;margin-top:25px}.venture-canvas{aspect-ratio:.92}}
+@media(max-width:1100px){.venture-layout{column-gap:4%;margin-top:70px}.venture-heading h2{font-size:6vw}.venture-detail{margin-top:45px}.venture-art{padding-top:75px}.venture-detail p{font-size:16px}}
+@media(max-width:760px){.venture-section{padding:40px 6% 28px}.venture-section>.section-marker>span:last-child{display:none}.venture-section .eyebrow{font-size:10px}.venture-layout{grid-template-columns:1fr;margin:58px 0 45px;gap:0}.venture-heading{grid-column:1;grid-row:1}.venture-heading h2{font-size:clamp(33px,7.9vw,57px)}.venture-art{grid-column:1;grid-row:2;max-width:370px;justify-self:center;padding-top:0;margin:10px 0 30px}.venture-canvas{aspect-ratio:1.25}.venture-art figcaption{font-size:8px}.venture-detail{grid-column:1;grid-row:3;margin-top:0;max-width:none}.venture-detail h3{font-size:23px}.venture-detail p{font-size:16px}.venture-contact{margin-top:27px}.venture-contact>span>span{font-size:12px}.venture-bottom{font-size:8px;line-height:1.6;gap:12px}.venture-bottom>span:last-child{text-align:right}}
+@media(prefers-reduced-motion:reduce){.venture-contact i{transition:none}.venture-contact:hover i{transform:none}}
+.motion-paused .venture-contact i{transition:none}
