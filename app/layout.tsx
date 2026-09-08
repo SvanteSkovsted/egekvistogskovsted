@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Egekvist & Skovsted — Making complex work feel simple',
-  description: 'We turn complex, manual work into simple, intelligent software. Independent minds. Transformative AI. Meet Egekvist & Skovsted.',
+  title: 'Oakranch — Making complex work feel simple',
+  description: 'We turn complex, manual work into simple, intelligent software. Independent minds. Transformative AI. Meet Oakranch.',
 };
 
 export default function RootLayout({
